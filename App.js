@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_URL = "YOUR_RENDER_URL_HERE/api"; // Replace after deploying backend
+const API_URL = "https://your-backend-name.onrender.com/api"; // Replace after deploying backend
 
 function App() {
   const [amount, setAmount] = useState('');
