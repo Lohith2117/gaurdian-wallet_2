@@ -1,5 +1,11 @@
 const cors = require('cors');
-app.use(cors()); // This tells the server: "It's okay to accept requests from my website"
+
+// This allows ANY website to talk to your backend (perfect for hackathons)
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+})); // This tells the server: "It's okay to accept requests from my website"
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
