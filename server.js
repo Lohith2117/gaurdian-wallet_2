@@ -38,4 +38,21 @@ app.get('/api/history', async (req, res) => {
 app.get('/', (req, res) => {
   res.send('🛡️ GuardianWallet API is Online and Secure!');
 });
+// This tells your server to show your HTML/React file when someone visits the URL
+app.get('*', (req, res) => {
+  res.send(`
+    <html>
+      <head><title>Guardian Wallet</title></head>
+      <body>
+        <div id="root"></div>
+        <script>
+           // Your Frontend code logic goes here or 
+           // just keep your App.js code as is if you are using a simple script tag
+        </script>
+        <h1>GuardianWallet 🛡️</h1>
+        <p>System Status: Active</p>
+        </body>
+    </html>
+  `);
+});
 app.listen(process.env.PORT || 3001, () => console.log('Guardian Backend Active'));
