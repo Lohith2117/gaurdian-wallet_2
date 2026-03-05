@@ -33,5 +33,7 @@ app.get('/api/history', async (req, res) => {
   const result = await pool.query('SELECT * FROM transactions ORDER BY created_at DESC');
   res.json(result.rows);
 });
-
+app.get('/', (req, res) => {
+  res.send('🛡️ GuardianWallet API is Online and Secure!');
+});
 app.listen(process.env.PORT || 3001, () => console.log('Guardian Backend Active'));
