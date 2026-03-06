@@ -226,7 +226,7 @@
         resetPin();
     }
     function closePinModal() { document.getElementById('pin-modal').style.display = 'none'; }
-    function resetPin() { currentPinInput = "5050"; updatePinDots(); }
+    function resetPin() { currentPinInput = ""; updatePinDots(); }
     function pressNum(n) {
         if(currentPinInput.length < 4) { currentPinInput += n; updatePinDots(); }
         if(currentPinInput.length === 4) setTimeout(verifyAndPay, 200);
