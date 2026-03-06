@@ -28,28 +28,25 @@
             justify-content: center;
         }
 
-        .app-container {
-            width: 100%;
-            max-width: 480px;
+        .app-container { width: 100%; max-width: 480px; }
+
+        .header { text-align: center; margin-bottom: 24px; position: relative; }
+        .header h1 { margin: 0; font-size: 1.8rem; color: var(--primary); display: flex; align-items: center; justify-content: center; gap: 10px; }
+        
+        /* View Toggle */
+        .view-toggle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #e2e8f0;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
         }
 
-        /* Header Section */
-        .header {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .header h1 { 
-            margin: 0; 
-            font-size: 1.8rem; 
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        /* Balance Card */
         .balance-card {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
@@ -59,189 +56,134 @@
             text-align: center;
             margin-bottom: 24px;
         }
-
-        .balance-card small { opacity: 0.8; font-size: 0.9rem; letter-spacing: 0.5px; }
         .balance-card h2 { margin: 10px 0 0; font-size: 2.5rem; font-weight: 700; }
 
-        /* Main Form Card */
-        .card { 
-            background: var(--card); 
-            padding: 24px; 
-            border-radius: 20px; 
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); 
-            margin-bottom: 24px;
-        }
-
+        .card { background: var(--card); padding: 24px; border-radius: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 24px; }
         label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: #64748b; }
-
-        input { 
-            width: 100%; 
-            padding: 14px; 
-            margin-bottom: 16px; 
-            border: 2px solid #e2e8f0; 
-            border-radius: 12px; 
-            box-sizing: border-box; 
-            font-size: 1rem;
-            transition: border-color 0.2s;
+        input { width: 100%; padding: 14px; margin-bottom: 16px; border: 2px solid #e2e8f0; border-radius: 12px; box-sizing: border-box; font-size: 1rem; }
+        
+        button.main-btn { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; cursor: pointer; font-size: 1.1rem; font-weight: 700; }
+        
+        /* Guardian Specific UI */
+        .guardian-action-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #fdfdfd;
         }
+        .action-btns { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-approve { flex: 1; background: var(--success); color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; }
+        .btn-reject { flex: 1; background: var(--danger); color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; }
 
-        input:focus { outline: none; border-color: var(--primary); }
-
-        button.main-btn { 
-            width: 100%; 
-            padding: 16px; 
-            background: var(--primary); 
-            color: white; 
-            border: none; 
-            border-radius: 12px; 
-            cursor: pointer; 
-            font-size: 1.1rem; 
-            font-weight: 700; 
-            transition: transform 0.1s, background 0.2s;
-        }
-
-        button.main-btn:active { transform: scale(0.98); }
-
-        /* Status Message */
-        #status-msg { 
-            font-size: 0.9em; 
-            color: #64748b; 
-            text-align: center; 
-            margin-top: 15px; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .pulse {
-            width: 8px;
-            height: 8px;
-            background: #10b981;
-            border-radius: 50%;
-            animation: pulse-animation 2s infinite;
-        }
-
-        /* History List */
-        .history-item {
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #f1f5f9;
-        }
-
-        .history-item.FLAGGED { background: #fef2f2; border-left: 4px solid var(--danger); }
+        /* History Status Colors */
+        .history-item { padding: 16px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #f1f5f9; }
+        .history-item.PENDING { background: #fffbeb; border-left: 4px solid var(--warning); }
         .history-item.SUCCESS { background: #f0fdf4; border-left: 4px solid var(--success); }
+        .history-item.REJECTED { background: #fef2f2; border-left: 4px solid var(--danger); opacity: 0.8; }
 
-        .history-info strong { display: block; font-size: 1.1rem; }
-        .history-info small { color: #64748b; }
-        .risk-badge { font-size: 0.75rem; padding: 4px 8px; border-radius: 20px; font-weight: bold; }
-        .risk-high { background: #fee2e2; color: var(--danger); }
+        .risk-badge { font-size: 0.7rem; padding: 4px 8px; border-radius: 20px; font-weight: bold; text-transform: uppercase; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-success { background: #dcfce7; color: #166534; }
+        .status-rejected { background: #fee2e2; color: #991b1b; }
 
-        /* PIN Modal */
-        #pin-modal {
+        /* Modal Overlays */
+        .modal-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(4px);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+            z-index: 100; align-items: center; justify-content: center;
         }
+        .modal-content { background: white; padding: 30px; border-radius: 24px; width: 90%; max-width: 320px; text-align: center; }
 
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 24px;
-            width: 90%;
-            max-width: 320px;
-            text-align: center;
-        }
-
-        .pin-dots { display: flex; justify-content: center; gap: 15px; margin: 20px 0; }
-        .dot { width: 15px; height: 15px; border-radius: 50%; border: 2px solid #cbd5e1; }
-        .dot.filled { background: var(--primary); border-color: var(--primary); }
-
-        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .num-btn { 
-            padding: 20px; 
-            font-size: 1.5rem; 
-            background: #f1f5f9; 
-            border: none; 
-            border-radius: 12px; 
-            cursor: pointer;
-            font-weight: 600;
-        }
+        .trusted-tag { background: #eff6ff; color: var(--primary); padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; margin-right: 5px; display: inline-block; margin-bottom: 5px; }
 
         @keyframes pulse-animation {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
             70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
+        .pulse { width: 8px; height: 8px; background: #10b981; border-radius: 50%; animation: pulse-animation 2s infinite; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
     <header class="header">
+        <button class="view-toggle" id="mode-btn" onclick="toggleGuardianMode()">Guardian Access</button>
         <h1><span>🛡️</span> GuardianWallet</h1>
-        <p style="color: #64748b; margin-top: 5px;">Secure Payments for You</p>
+        <p id="view-subtitle" style="color: #64748b; margin-top: 5px;">Secure Payments for You</p>
     </header>
 
-    <div class="balance-card">
-        <small>SPENT TODAY</small>
-        <h2 id="total-amount">$0.00</h2>
+    <div id="senior-ui">
+        <div class="balance-card">
+            <small>SPENT TODAY</small>
+            <h2 id="total-amount">$0.00</h2>
+        </div>
+
+        <div class="card">
+            <label>How much?</label>
+            <input type="number" id="amount" placeholder="0.00">
+            
+            <label>To whom?</label>
+            <input type="text" id="recipient" placeholder="Name of person or shop">
+            
+            <button class="main-btn" onclick="openPinModal()">Send Money Safely</button>
+            
+            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 15px; font-size: 0.8rem; color: #64748b;">
+                <div class="pulse"></div>
+                <span>Guardian AI Protection Active</span>
+            </div>
+        </div>
+
+        <div class="card" style="padding: 15px;">
+            <label>Trusted Contacts</label>
+            <div id="trusted-list" style="margin-bottom: 10px;"></div>
+            <div style="display: flex; gap: 5px;">
+                <input type="text" id="new-trusted" placeholder="Add name" style="margin: 0; padding: 8px;">
+                <button onclick="addTrusted()" style="padding: 0 15px; border-radius: 10px; border: none; background: #e2e8f0;">Add</button>
+            </div>
+        </div>
     </div>
 
-    <div class="card">
-        <label>How much?</label>
-        <input type="number" id="amount" placeholder="0.00" inputmode="decimal">
-        
-        <label>To whom?</label>
-        <input type="text" id="recipient" placeholder="Name of person or shop">
-        
-        <button class="main-btn" onclick="openPinModal()">Send Money Safely</button>
-        
-        <div id="status-msg">
-            <div class="pulse"></div>
-            <span>System Secure & Active</span>
+    <div id="guardian-ui" style="display: none;">
+        <div class="card" style="background: #eff6ff; border: 1px solid #bfdbfe;">
+            <h3 style="margin-top: 0;">Caregiver Dashboard 🔑</h3>
+            <p style="font-size: 0.85rem; color: #1e40af;">Review payments caught in the "Safety Buffer".</p>
+            <div id="pending-approvals">
+                </div>
         </div>
     </div>
 
     <div class="history-section">
         <h3 style="padding-left: 10px;">Recent Activity</h3>
-        <div id="log-list">
-            </div>
+        <div id="log-list"></div>
     </div>
 </div>
 
-<div id="pin-modal">
+<div id="pin-modal" class="modal-overlay">
     <div class="modal-content">
         <h3>Enter Security PIN</h3>
-        <p style="color: #64748b; font-size: 0.9rem;">Confirm this is you</p>
-        <div class="pin-dots">
-            <div class="dot" id="dot-0"></div>
-            <div class="dot" id="dot-1"></div>
-            <div class="dot" id="dot-2"></div>
-            <div class="dot" id="dot-3"></div>
+        <div style="display: flex; justify-content: center; gap: 10px; margin: 20px 0;" id="pin-dots">
+            <div style="width:12px; height:12px; border-radius:50%; border:2px solid #cbd5e1;"></div>
+            <div style="width:12px; height:12px; border-radius:50%; border:2px solid #cbd5e1;"></div>
+            <div style="width:12px; height:12px; border-radius:50%; border:2px solid #cbd5e1;"></div>
+            <div style="width:12px; height:12px; border-radius:50%; border:2px solid #cbd5e1;"></div>
         </div>
-        <div class="numpad">
-            <button class="num-btn" onclick="pressNum('1')">1</button>
-            <button class="num-btn" onclick="pressNum('2')">2</button>
-            <button class="num-btn" onclick="pressNum('3')">3</button>
-            <button class="num-btn" onclick="pressNum('4')">4</button>
-            <button class="num-btn" onclick="pressNum('5')">5</button>
-            <button class="num-btn" onclick="pressNum('6')">6</button>
-            <button class="num-btn" onclick="pressNum('7')">7</button>
-            <button class="num-btn" onclick="pressNum('8')">8</button>
-            <button class="num-btn" onclick="pressNum('9')">9</button>
-            <button class="num-btn" style="background:#fee2e2" onclick="resetPin()">C</button>
-            <button class="num-btn" onclick="pressNum('0')">0</button>
-            <button class="num-btn" style="background:#e2e8f0" onclick="closePinModal()">✕</button>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+            <button style="padding:15px; font-size:1.2rem; border-radius:10px; border:none;" onclick="pressNum('1')">1</button>
+            <button style="padding:15px; font-size:1.2rem; border-radius:10px; border:none;" onclick="pressNum('2')">2</button>
+            <button style="padding:15px; font-size:1.2rem; border-radius:10px; border:none;" onclick="pressNum('3')">3</button>
+            <button style="padding:15px; font-size:1.2rem; border-radius:10px; border:none;" onclick="pressNum('4')">4</button>
+            <button style="padding:15px; font-size:1.2rem; border-radius:10px; border:none;" onclick="pressNum('5')">5</button>
+            <button style="padding:15px; font-size:1.2rem; border-radius:10px; border:none;" onclick="pressNum('6')">6</button>
+            <button style="padding:15px; font-size:1.2rem; border-radius:10px; border:none;" onclick="pressNum('7')">7</button>
+            <button style="padding:15px; font-size:1.2rem; border-radius:10px; border:none;" onclick="pressNum('8')">8</button>
+            <button style="padding:15px; font-size:1.2rem; border-radius:10px; border:none;" onclick="pressNum('9')">9</button>
+            <button style="padding:15px; font-size:1.2rem; border-radius:10px; border:none; background:#fee2e2" onclick="resetPin()">C</button>
+            <button style="padding:15px; font-size:1.2rem; border-radius:10px; border:none;" onclick="pressNum('0')">0</button>
+            <button style="padding:15px; font-size:1.2rem; border-radius:10px; border:none; background:#e2e8f0" onclick="closePinModal()">✕</button>
         </div>
     </div>
 </div>
@@ -249,120 +191,129 @@
 <script>
     const API_BASE_URL = "https://guardian-wallet-backend.onrender.com"; 
     const SECURE_PIN = "5050";
+    const GUARDIAN_PASS = "family123";
+    
     let currentPinInput = "";
+    let isGuardian = false;
 
-    // PIN MODAL LOGIC
+    // VIEW TOGGLE LOGIC
+    function toggleGuardianMode() {
+        if (!isGuardian) {
+            const pass = prompt("Enter Caregiver Access Code:");
+            if (pass === GUARDIAN_PASS) {
+                isGuardian = true;
+                document.getElementById('senior-ui').style.display = 'none';
+                document.getElementById('guardian-ui').style.display = 'block';
+                document.getElementById('mode-btn').innerText = "Exit Portal";
+                document.getElementById('view-subtitle').innerText = "Caregiver Dashboard Active";
+                loadHistory(); // Refresh to populate pending items
+            } else {
+                alert("Access Denied.");
+            }
+        } else {
+            isGuardian = false;
+            document.getElementById('senior-ui').style.display = 'block';
+            document.getElementById('guardian-ui').style.display = 'none';
+            document.getElementById('mode-btn').innerText = "Guardian Access";
+            document.getElementById('view-subtitle').innerText = "Secure Payments for You";
+        }
+    }
+
+    // PIN LOGIC
     function openPinModal() {
-        const amount = document.getElementById('amount').value;
-        const recipient = document.getElementById('recipient').value;
-        if(!amount || !recipient) return alert("Please enter amount and recipient.");
-        
+        if(!document.getElementById('amount').value || !document.getElementById('recipient').value) return alert("Please fill details");
         document.getElementById('pin-modal').style.display = 'flex';
         resetPin();
     }
-
-    function closePinModal() {
-        document.getElementById('pin-modal').style.display = 'none';
+    function closePinModal() { document.getElementById('pin-modal').style.display = 'none'; }
+    function resetPin() { currentPinInput = "5050"; updatePinDots(); }
+    function pressNum(n) {
+        if(currentPinInput.length < 4) { currentPinInput += n; updatePinDots(); }
+        if(currentPinInput.length === 4) setTimeout(verifyAndPay, 200);
     }
-
-    function resetPin() {
-        currentPinInput = "";
-        updatePinDots();
-    }
-
-    function pressNum(num) {
-        if(currentPinInput.length < 4) {
-            currentPinInput += num;
-            updatePinDots();
-        }
-        if(currentPinInput.length === 4) {
-            setTimeout(verifyAndPay, 200);
-        }
-    }
-
     function updatePinDots() {
-        for(let i=0; i<4; i++) {
-            const dot = document.getElementById(`dot-${i}`);
-            dot.className = i < currentPinInput.length ? 'dot filled' : 'dot';
-        }
+        const dots = document.getElementById('pin-dots').children;
+        for(let i=0; i<4; i++) dots[i].style.background = i < currentPinInput.length ? 'var(--primary)' : 'transparent';
     }
 
     async function verifyAndPay() {
-        if (currentPinInput !== SECURE_PIN) {
-            alert("❌ Incorrect PIN. Safety lock engaged.");
-            resetPin();
-            return;
-        }
-        
+        if (currentPinInput !== SECURE_PIN) { alert("Wrong PIN"); resetPin(); return; }
         closePinModal();
         processPayment();
     }
 
-    // PAYMENT LOGIC
+    // CORE API LOGIC
     async function processPayment() {
-        const amountInput = document.getElementById('amount');
-        const recipientInput = document.getElementById('recipient');
-        const statusMsg = document.getElementById('status-msg');
-        
-        const amount = amountInput.value;
-        const recipient = recipientInput.value;
-
+        const amount = document.getElementById('amount').value;
+        const recipient = document.getElementById('recipient').value;
         try {
-            statusMsg.innerHTML = `<div class="pulse" style="background:var(--warning)"></div> <span>AI analyzing risk...</span>`;
-            
             const res = await axios.post(`${API_BASE_URL}/api/pay`, { amount, recipient });
-            
-            if(res.data.status === 'FLAGGED') {
-                alert(`⚠️ TRANSACTION STOPPED\n\nGuardian AI detected high risk (Score: ${res.data.risk_score}). This has been reported to your family for review.`);
+            if(res.data.status === 'PENDING') {
+                alert("Safety Notice: This large payment is being held for family review. Don't worry, your money is safe!");
             } else {
-                alert(`✅ Sent $${amount} to ${recipient} successfully.`);
+                alert("Payment successful!");
             }
-            
-            amountInput.value = '';
-            recipientInput.value = '';
+            document.getElementById('amount').value = '';
+            document.getElementById('recipient').value = '';
             loadHistory();
-        } catch (e) { 
-            alert("Connection Error: Guardian servers are unreachable."); 
-        } finally {
-            statusMsg.innerHTML = `<div class="pulse"></div> <span>System Secure & Active</span>`;
-        }
+        } catch (e) { alert("Error connecting to server."); }
+    }
+
+    async function handleApproval(id, action) {
+        try {
+            await axios.post(`${API_BASE_URL}/api/approve`, { id, action });
+            loadHistory();
+        } catch (e) { alert("Approval failed."); }
+    }
+
+    async function addTrusted() {
+        const name = document.getElementById('new-trusted').value;
+        if(!name) return;
+        await axios.post(`${API_BASE_URL}/api/trusted`, { name });
+        document.getElementById('new-trusted').value = '';
+        loadHistory();
     }
 
     async function loadHistory() {
         try {
-            const res = await axios.get(`${API_BASE_URL}/api/history`);
-            const list = document.getElementById('log-list');
-            const totalDisplay = document.getElementById('total-amount');
-            
-            if (res.data.length === 0) {
-                list.innerHTML = "<p style='text-align:center; color:gray'>No activity yet.</p>";
-                return;
-            }
+            const [histRes, trustRes] = await Promise.all([
+                axios.get(`${API_BASE_URL}/api/history`),
+                axios.get(`${API_BASE_URL}/api/trusted`)
+            ]);
 
+            // Render Trusted
+            document.getElementById('trusted-list').innerHTML = trustRes.data.map(t => `<span class="trusted-tag">${t.name}</span>`).join('');
+
+            // Render Pending (for Guardian)
+            const pendingList = histRes.data.filter(t => t.status === 'PENDING');
+            document.getElementById('pending-approvals').innerHTML = pendingList.length ? pendingList.map(t => `
+                <div class="guardian-action-card">
+                    <strong>$${t.amount} to ${t.recipient}</strong>
+                    <div class="action-btns">
+                        <button class="btn-approve" onclick="handleApproval(${t.id}, 'SUCCESS')">Approve</button>
+                        <button class="btn-reject" onclick="handleApproval(${t.id}, 'REJECTED')">Block</button>
+                    </div>
+                </div>
+            `).join('') : "<p style='font-size:0.8rem; color:gray'>No pending items.</p>";
+
+            // Render General History
             let total = 0;
-            list.innerHTML = res.data.map(t => {
-                total += parseFloat(t.amount);
-                const isFlagged = t.status === 'FLAGGED';
-                
+            document.getElementById('log-list').innerHTML = histRes.data.map(t => {
+                if(t.status === 'SUCCESS') total += parseFloat(t.amount);
                 return `
                     <div class="history-item ${t.status}">
-                        <div class="history-info">
-                            <strong>$${parseFloat(t.amount).toFixed(2)}</strong>
-                            <small>to ${t.recipient}</small>
-                        </div>
                         <div>
-                            <span class="risk-badge ${isFlagged ? 'risk-high' : ''}">
-                                ${isFlagged ? '⚠️ FLAGGED' : '✓ SECURE'}
-                            </span>
+                            <strong>$${parseFloat(t.amount).toFixed(2)}</strong>
+                            <small style="display:block; color:#64748b">to ${t.recipient}</small>
                         </div>
+                        <span class="risk-badge status-${t.status.toLowerCase()}">
+                            ${t.status === 'PENDING' ? '⏳ Held' : t.status === 'REJECTED' ? '❌ Blocked' : '✓ Sent'}
+                        </span>
                     </div>
                 `;
             }).join('');
-
-            totalDisplay.innerText = `$${total.toFixed(2)}`;
-        } catch (e) { 
-            document.getElementById('log-list').innerHTML = "History temporarily unavailable.";
-        }
+            document.getElementById('total-amount').innerText = `$${total.toFixed(2)}`;
+        } catch (e) { console.error(e); }
     }
 
     loadHistory();
