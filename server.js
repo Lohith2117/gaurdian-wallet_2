@@ -4,8 +4,6 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-
-// FIX: Only declare CORS once and use it
 app.use(cors());
 app.use(express.json());
 
@@ -14,40 +12,56 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
-// Root route to check if backend is alive
-app.get('/', (req, res) => {
-  res.send('🛡️ GuardianWallet API is Online and Secure!');
-});
+// --- TRANSACTIONS ---
 
-// Payment route
 app.post('/api/pay', async (req, res) => {
   const { amount, recipient } = req.body;
-  // Convert amount to number for logic
-  const numericAmount = parseFloat(amount);
-  const riskScore = numericAmount > 500 ? 85 : 10;
-  const status = riskScore > 80 ? 'FLAGGED' : 'SUCCESS';
-
+  
   try {
+    // 1. Check if recipient is a Trusted Contact
+    const trustedCheck = await pool.query('SELECT * FROM trusted_contacts WHERE name = $1', [recipient]);
+    const isTrusted = trustedCheck.rows.length > 0;
+
+    // 2. Risk Logic: High risk if > $500 and NOT trusted
+    const riskScore = (amount > 500 && !isTrusted) ? 90 : 10;
+    const status = riskScore > 80 ? 'PENDING' : 'SUCCESS';
+
     const result = await pool.query(
       'INSERT INTO transactions (amount, recipient, risk_score, status) VALUES ($1, $2, $3, $4) RETURNING *',
-      [numericAmount, recipient, riskScore, status]
+      [amount, recipient, riskScore, status]
     );
     res.json(result.rows[0]);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Database Error" });
+    res.status(500).json({ error: err.message });
   }
 });
 
-// History route
+// Update transaction status (Approve/Reject)
+app.post('/api/approve', async (req, res) => {
+    const { id, action } = req.body; // action: 'SUCCESS' or 'REJECTED'
+    const result = await pool.query(
+        'UPDATE transactions SET status = $1 WHERE id = $2 RETURNING *',
+        [action, id]
+    );
+    res.json(result.rows[0]);
+});
+
 app.get('/api/history', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM transactions ORDER BY created_at DESC');
-    res.json(result.rows);
-  } catch (err) {
-    res.status(500).json({ error: "Database Error" });
-  }
+  const result = await pool.query('SELECT * FROM transactions ORDER BY created_at DESC');
+  res.json(result.rows);
 });
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`Guardian Backend Active on port ${PORT}`));
+// --- TRUSTED CONTACTS ---
+
+app.get('/api/trusted', async (req, res) => {
+    const result = await pool.query('SELECT * FROM trusted_contacts');
+    res.json(result.rows);
+});
+
+app.post('/api/trusted', async (req, res) => {
+    const { name } = req.body;
+    await pool.query('INSERT INTO trusted_contacts (name) VALUES ($1) ON CONFLICT DO NOTHING', [name]);
+    res.json({ success: true });
+});
+
+app.listen(process.env.PORT || 3001, () => console.log('Guardian Backend Active'));
