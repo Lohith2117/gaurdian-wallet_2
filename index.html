@@ -7,49 +7,100 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         body { font-family: sans-serif; padding: 40px; background: #f4f7f6; }
-        .card { background: white; padding: 20px; border-radius: 12px; shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
-        button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        .flagged { color: #d9534f; font-weight: bold; }
-        .success { color: #5cb85c; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #0056b3; }
+        .flagged { color: #d9534f; font-weight: bold; border-left: 4px solid #d9534f; padding-left: 10px; }
+        .success { color: #5cb85c; border-left: 4px solid #5cb85c; padding-left: 10px; }
+        #status-msg { font-size: 0.8em; color: #666; text-align: center; margin-top: 10px; }
     </style>
 </head>
 <body>
     <div class="card">
         <h1>GuardianWallet 🛡️</h1>
         <p>Secure Micro-Payments for Seniors</p>
+        
         <input type="number" id="amount" placeholder="Amount ($)">
         <input type="text" id="recipient" placeholder="Recipient Name">
-        <button onclick="handlePayment()">Send Money</button>
+        <button onclick="handlePayment()">Send Money Safely</button>
+        <div id="status-msg">System Secure & Active</div>
         
-        <div id="history" style="margin-top: 20px;">
+        <div id="history" style="margin-top: 30px;">
             <h3>Recent Activity</h3>
-            <div id="log-list"></div>
+            <hr>
+            <div id="log-list">Loading transactions...</div>
         </div>
     </div>
 
     <script>
-        const API_URL = "https://gaurdian-wallet-ui.onrender.com/api"; // UPDATE THIS!
+        // 1. SIMPLE SECURITY GATE
+        const pin = prompt("Please enter your 4-digit Guardian PIN:");
+        if (pin !== "5050") {
+            alert("Incorrect PIN. Access Denied.");
+            document.body.innerHTML = "<div style='text-align:center; margin-top:100px;'><h1>🔒 Access Locked</h1><p>Refresh to try again.</p></div>";
+        }
+
+        // 2. CONFIGURATION - REPLACE THE URL BELOW WITH YOUR BACKEND WEB SERVICE URL
+        const API_BASE_URL = "https://guardian-wallet-backend.onrender.com"; 
 
         async function handlePayment() {
-            const amount = document.getElementById('amount').value;
-            const recipient = document.getElementById('recipient').value;
+            const amountInput = document.getElementById('amount');
+            const recipientInput = document.getElementById('recipient');
+            
+            const amount = amountInput.value;
+            const recipient = recipientInput.value;
+
+            if(!amount || !recipient) {
+                alert("Please fill in both fields.");
+                return;
+            }
+
             try {
-                const res = await axios.post(`${API_URL}/pay`, { amount, recipient });
-                alert(`Transaction ${res.data.status}! Risk Score: ${res.data.risk_score}`);
+                // Show user we are working
+                document.getElementById('status-msg').innerText = "Analyzing security risk...";
+                
+                const res = await axios.post(`${API_BASE_URL}/api/pay`, { amount, recipient });
+                
+                console.log("Success:", res.data);
+                alert(`Transaction ${res.data.status}!\nRisk Score: ${res.data.risk_score}`);
+                
+                // Clear inputs
+                amountInput.value = '';
+                recipientInput.value = '';
+                
                 loadHistory();
-            } catch (e) { alert("Error connecting to security server."); }
+            } catch (e) { 
+                console.error("Payment Error Details:", e);
+                alert("Security Server Error: Could not process payment. Check if Backend is running."); 
+            } finally {
+                document.getElementById('status-msg').innerText = "System Secure & Active";
+            }
         }
 
         async function loadHistory() {
-            const res = await axios.get(`${API_URL}/history`);
-            const list = document.getElementById('log-list');
-            list.innerHTML = res.data.map(t => `
-                <p class="${t.status === 'FLAGGED' ? 'flagged' : 'success'}">
-                    $${t.amount} to ${t.recipient} - ${t.status}
-                </p>
-            `).join('');
+            try {
+                const res = await axios.get(`${API_BASE_URL}/api/history`);
+                const list = document.getElementById('log-list');
+                
+                if (res.data.length === 0) {
+                    list.innerHTML = "<p style='color:gray'>No transactions yet.</p>";
+                    return;
+                }
+
+                list.innerHTML = res.data.map(t => `
+                    <div class="${t.status === 'FLAGGED' ? 'flagged' : 'success'}" style="margin-bottom:10px;">
+                        <strong>$${t.amount}</strong> to ${t.recipient} <br>
+                        <small>Status: ${t.status} | Score: ${t.risk_score}</small>
+                    </div>
+                `).join('');
+            } catch (e) { 
+                console.error("History Load Error:", e);
+                document.getElementById('log-list').innerHTML = "Error loading history.";
+            }
         }
+
+        // Initial load
         loadHistory();
     </script>
 </body>
