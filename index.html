@@ -3,129 +3,370 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GuardianWallet 🛡️</title>
+    <title>GuardianWallet | Secure Payments</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; padding: 40px; background: #f4f7f6; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
-        .stats-box { background: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; }
-        .stats-box h2 { margin: 0; color: #007bff; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        button:hover { background: #0056b3; }
-        .flagged { color: #d9534f; font-weight: bold; border-left: 4px solid #d9534f; padding-left: 10px; background: #fff5f5; padding: 8px; border-radius: 0 4px 4px 0; }
-        .success { color: #5cb85c; border-left: 4px solid #5cb85c; padding-left: 10px; background: #f9fff9; padding: 8px; border-radius: 0 4px 4px 0; }
-        #status-msg { font-size: 0.8em; color: #666; text-align: center; margin-top: 10px; }
-        hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --success: #059669;
+            --danger: #dc2626;
+            --warning: #f59e0b;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 { 
+            margin: 0; 
+            font-size: 1.8rem; 
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Balance Card */
+        .balance-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .balance-card small { opacity: 0.8; font-size: 0.9rem; letter-spacing: 0.5px; }
+        .balance-card h2 { margin: 10px 0 0; font-size: 2.5rem; font-weight: 700; }
+
+        /* Main Form Card */
+        .card { 
+            background: var(--card); 
+            padding: 24px; 
+            border-radius: 20px; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); 
+            margin-bottom: 24px;
+        }
+
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: #64748b; }
+
+        input { 
+            width: 100%; 
+            padding: 14px; 
+            margin-bottom: 16px; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 12px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus { outline: none; border-color: var(--primary); }
+
+        button.main-btn { 
+            width: 100%; 
+            padding: 16px; 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-size: 1.1rem; 
+            font-weight: 700; 
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        button.main-btn:active { transform: scale(0.98); }
+
+        /* Status Message */
+        #status-msg { 
+            font-size: 0.9em; 
+            color: #64748b; 
+            text-align: center; 
+            margin-top: 15px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse-animation 2s infinite;
+        }
+
+        /* History List */
+        .history-item {
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #f1f5f9;
+        }
+
+        .history-item.FLAGGED { background: #fef2f2; border-left: 4px solid var(--danger); }
+        .history-item.SUCCESS { background: #f0fdf4; border-left: 4px solid var(--success); }
+
+        .history-info strong { display: block; font-size: 1.1rem; }
+        .history-info small { color: #64748b; }
+        .risk-badge { font-size: 0.75rem; padding: 4px 8px; border-radius: 20px; font-weight: bold; }
+        .risk-high { background: #fee2e2; color: var(--danger); }
+
+        /* PIN Modal */
+        #pin-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 320px;
+            text-align: center;
+        }
+
+        .pin-dots { display: flex; justify-content: center; gap: 15px; margin: 20px 0; }
+        .dot { width: 15px; height: 15px; border-radius: 50%; border: 2px solid #cbd5e1; }
+        .dot.filled { background: var(--primary); border-color: var(--primary); }
+
+        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .num-btn { 
+            padding: 20px; 
+            font-size: 1.5rem; 
+            background: #f1f5f9; 
+            border: none; 
+            border-radius: 12px; 
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        @keyframes pulse-animation {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>GuardianWallet 🛡️</h1>
-        <p>Secure Micro-Payments for Seniors</p>
 
-        <div class="stats-box">
-            <small>Total Outgoing (Today)</small>
-            <h2 id="total-amount">$0.00</h2>
-        </div>
+<div class="app-container">
+    <header class="header">
+        <h1><span>🛡️</span> GuardianWallet</h1>
+        <p style="color: #64748b; margin-top: 5px;">Secure Payments for You</p>
+    </header>
+
+    <div class="balance-card">
+        <small>SPENT TODAY</small>
+        <h2 id="total-amount">$0.00</h2>
+    </div>
+
+    <div class="card">
+        <label>How much?</label>
+        <input type="number" id="amount" placeholder="0.00" inputmode="decimal">
         
-        <input type="number" id="amount" placeholder="Amount ($)">
-        <input type="text" id="recipient" placeholder="Recipient Name">
-        <button onclick="handlePayment()">Send Money Safely</button>
-        <div id="status-msg">System Secure & Active</div>
+        <label>To whom?</label>
+        <input type="text" id="recipient" placeholder="Name of person or shop">
         
-        <div id="history" style="margin-top: 30px;">
-            <h3>Recent Activity</h3>
-            <hr>
-            <div id="log-list">Loading transactions...</div>
+        <button class="main-btn" onclick="openPinModal()">Send Money Safely</button>
+        
+        <div id="status-msg">
+            <div class="pulse"></div>
+            <span>System Secure & Active</span>
         </div>
     </div>
 
-    <script>
-        // CONFIGURATION
-        const API_BASE_URL = "https://guardian-wallet-backend.onrender.com"; 
-        const SECURE_PIN = "5050";
+    <div class="history-section">
+        <h3 style="padding-left: 10px;">Recent Activity</h3>
+        <div id="log-list">
+            </div>
+    </div>
+</div>
 
-        async function handlePayment() {
-            // 1. PIN CHALLENGE (Before any processing)
-            const userPin = prompt("Confirm your 4-digit PIN to authorize this transfer:");
-            
-            if (userPin !== SECURE_PIN) {
-                alert("❌ Unauthorized! Transaction blocked by Guardian Security.");
-                return;
-            }
+<div id="pin-modal">
+    <div class="modal-content">
+        <h3>Enter Security PIN</h3>
+        <p style="color: #64748b; font-size: 0.9rem;">Confirm this is you</p>
+        <div class="pin-dots">
+            <div class="dot" id="dot-0"></div>
+            <div class="dot" id="dot-1"></div>
+            <div class="dot" id="dot-2"></div>
+            <div class="dot" id="dot-3"></div>
+        </div>
+        <div class="numpad">
+            <button class="num-btn" onclick="pressNum('1')">1</button>
+            <button class="num-btn" onclick="pressNum('2')">2</button>
+            <button class="num-btn" onclick="pressNum('3')">3</button>
+            <button class="num-btn" onclick="pressNum('4')">4</button>
+            <button class="num-btn" onclick="pressNum('5')">5</button>
+            <button class="num-btn" onclick="pressNum('6')">6</button>
+            <button class="num-btn" onclick="pressNum('7')">7</button>
+            <button class="num-btn" onclick="pressNum('8')">8</button>
+            <button class="num-btn" onclick="pressNum('9')">9</button>
+            <button class="num-btn" style="background:#fee2e2" onclick="resetPin()">C</button>
+            <button class="num-btn" onclick="pressNum('0')">0</button>
+            <button class="num-btn" style="background:#e2e8f0" onclick="closePinModal()">✕</button>
+        </div>
+    </div>
+</div>
 
-            const amountInput = document.getElementById('amount');
-            const recipientInput = document.getElementById('recipient');
-            
-            const amount = amountInput.value;
-            const recipient = recipientInput.value;
+<script>
+    const API_BASE_URL = "https://guardian-wallet-backend.onrender.com"; 
+    const SECURE_PIN = "5050";
+    let currentPinInput = "";
 
-            if(!amount || !recipient) {
-                alert("Please fill in both fields.");
-                return;
-            }
+    // PIN MODAL LOGIC
+    function openPinModal() {
+        const amount = document.getElementById('amount').value;
+        const recipient = document.getElementById('recipient').value;
+        if(!amount || !recipient) return alert("Please enter amount and recipient.");
+        
+        document.getElementById('pin-modal').style.display = 'flex';
+        resetPin();
+    }
 
-            try {
-                document.getElementById('status-msg').innerText = "Guardian AI is analyzing risk...";
-                
-                const res = await axios.post(`${API_BASE_URL}/api/pay`, { amount, recipient });
-                
-                if(res.data.status === 'FLAGGED') {
-                    alert(`⚠️ WARNING: Transaction FLAGGED!\nRisk Score: ${res.data.risk_score}\nThis was logged for your safety.`);
-                } else {
-                    alert(`✅ Success: Money sent to ${recipient}`);
-                }
-                
-                // Clear inputs
-                amountInput.value = '';
-                recipientInput.value = '';
-                
-                loadHistory();
-            } catch (e) { 
-                console.error("Payment Error:", e);
-                alert("Security Server Error: Connection timed out."); 
-            } finally {
-                document.getElementById('status-msg').innerText = "System Secure & Active";
-            }
+    function closePinModal() {
+        document.getElementById('pin-modal').style.display = 'none';
+    }
+
+    function resetPin() {
+        currentPinInput = "";
+        updatePinDots();
+    }
+
+    function pressNum(num) {
+        if(currentPinInput.length < 4) {
+            currentPinInput += num;
+            updatePinDots();
         }
+        if(currentPinInput.length === 4) {
+            setTimeout(verifyAndPay, 200);
+        }
+    }
 
-        async function loadHistory() {
-            try {
-                const res = await axios.get(`${API_BASE_URL}/api/history`);
-                const list = document.getElementById('log-list');
-                const totalDisplay = document.getElementById('total-amount');
+    function updatePinDots() {
+        for(let i=0; i<4; i++) {
+            const dot = document.getElementById(`dot-${i}`);
+            dot.className = i < currentPinInput.length ? 'dot filled' : 'dot';
+        }
+    }
+
+    async function verifyAndPay() {
+        if (currentPinInput !== SECURE_PIN) {
+            alert("❌ Incorrect PIN. Safety lock engaged.");
+            resetPin();
+            return;
+        }
+        
+        closePinModal();
+        processPayment();
+    }
+
+    // PAYMENT LOGIC
+    async function processPayment() {
+        const amountInput = document.getElementById('amount');
+        const recipientInput = document.getElementById('recipient');
+        const statusMsg = document.getElementById('status-msg');
+        
+        const amount = amountInput.value;
+        const recipient = recipientInput.value;
+
+        try {
+            statusMsg.innerHTML = `<div class="pulse" style="background:var(--warning)"></div> <span>AI analyzing risk...</span>`;
+            
+            const res = await axios.post(`${API_BASE_URL}/api/pay`, { amount, recipient });
+            
+            if(res.data.status === 'FLAGGED') {
+                alert(`⚠️ TRANSACTION STOPPED\n\nGuardian AI detected high risk (Score: ${res.data.risk_score}). This has been reported to your family for review.`);
+            } else {
+                alert(`✅ Sent $${amount} to ${recipient} successfully.`);
+            }
+            
+            amountInput.value = '';
+            recipientInput.value = '';
+            loadHistory();
+        } catch (e) { 
+            alert("Connection Error: Guardian servers are unreachable."); 
+        } finally {
+            statusMsg.innerHTML = `<div class="pulse"></div> <span>System Secure & Active</span>`;
+        }
+    }
+
+    async function loadHistory() {
+        try {
+            const res = await axios.get(`${API_BASE_URL}/api/history`);
+            const list = document.getElementById('log-list');
+            const totalDisplay = document.getElementById('total-amount');
+            
+            if (res.data.length === 0) {
+                list.innerHTML = "<p style='text-align:center; color:gray'>No activity yet.</p>";
+                return;
+            }
+
+            let total = 0;
+            list.innerHTML = res.data.map(t => {
+                total += parseFloat(t.amount);
+                const isFlagged = t.status === 'FLAGGED';
                 
-                if (res.data.length === 0) {
-                    list.innerHTML = "<p style='color:gray'>No transactions yet.</p>";
-                    return;
-                }
-
-                // Calculate total spent
-                let total = 0;
-                list.innerHTML = res.data.map(t => {
-                    // Only add successful/non-flagged to the total if you want, 
-                    // or add everything to show volume:
-                    total += parseFloat(t.amount);
-                    
-                    return `
-                        <div class="${t.status === 'FLAGGED' ? 'flagged' : 'success'}" style="margin-bottom:12px;">
-                            <strong>$${t.amount}</strong> to ${t.recipient} <br>
-                            <small>Status: ${t.status} | Risk Score: ${t.risk_score}</small>
+                return `
+                    <div class="history-item ${t.status}">
+                        <div class="history-info">
+                            <strong>$${parseFloat(t.amount).toFixed(2)}</strong>
+                            <small>to ${t.recipient}</small>
                         </div>
-                    `;
-                }).join('');
+                        <div>
+                            <span class="risk-badge ${isFlagged ? 'risk-high' : ''}">
+                                ${isFlagged ? '⚠️ FLAGGED' : '✓ SECURE'}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
 
-                totalDisplay.innerText = `$${total.toFixed(2)}`;
-
-            } catch (e) { 
-                console.error("History Load Error:", e);
-                document.getElementById('log-list').innerHTML = "Error loading history.";
-            }
+            totalDisplay.innerText = `$${total.toFixed(2)}`;
+        } catch (e) { 
+            document.getElementById('log-list').innerHTML = "History temporarily unavailable.";
         }
+    }
 
-        // Initial load
-        loadHistory();
-    </script>
+    loadHistory();
+</script>
+
 </body>
 </html>
